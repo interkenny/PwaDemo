@@ -11,5 +11,15 @@
       "sizes": "120x120",
       "type": "image/png"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "Top page",
+      "short_name": "Top",
+      "url": "/index.html",
+      "icons": [
+        { "src": "/demo.png", "sizes": "120x120", "type": "image/png" }
+      ]
+    }
   ]
 }
