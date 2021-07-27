@@ -1,15 +1,26 @@
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.1.5/workbox-sw.js');
-var cacheStorageKey = 'minimal-pwa-1'
+var cacheStorageKey = 'minimal-pwa-1';
 var cacheList=[
   '/',
-  'index.html',
-  'main.css',
-  'demo.png'
-]
+  '/index.html',
+  '/main.css',
+  '/demo.png'
+];
+const fillServiceWorkerCache = function () {
+  /*It will not cache and also not reject for individual resources that failed to be added in the cache. unlike fillServiceWorkerCache which stops caching as soon as one problem occurs. see http://stackoverflow.com/questions/41388616/what-can-cause-a-promise-rejected-with-invalidstateerror-here*/
+  return caches.open(cacheStorageKey).then(function (cache) {
+      return Promise.all(
+        cacheList.map(function (url) {
+              return cache.add(url).catch(function (reason) {
+                  return console.log([url + "failed: " + String(reason)]);
+              });
+          })
+      );
+  });
+};
 self.addEventListener('install',e =>{
   e.waitUntil(
-    caches.open(cacheStorageKey)
-    .then(cache => cache.addAll(cacheList))
+    fillServiceWorkerCache()
     .then(() => self.skipWaiting())
   )
 })
@@ -22,7 +33,7 @@ self.addEventListener('fetch',function(e){
       return fetch(e.request.url)
     })
   )
-})
+});
 self.addEventListener('activate',function(e){
   e.waitUntil(
     // Get cache list names
@@ -39,4 +50,4 @@ self.addEventListener('activate',function(e){
       return self.clients.claim()
     })
   )
-})
+});
